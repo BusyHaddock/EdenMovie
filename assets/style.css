@@ -1,0 +1,86 @@
+/* Fond principal */
+.stApp {
+    background-color: #1a1a2e;
+}
+
+/* Titres */
+h1 {
+    color: #FFD700 !important;
+    font-family: 'Segoe UI', sans-serif !important;
+    letter-spacing: 2px;
+}
+h2, h3 {
+    color: #4169E1 !important;
+    font-family: 'Segoe UI', sans-serif !important;
+}
+
+/* Texte général */
+p, label, .stMarkdown {
+    color: #e0e0e0 !important;
+}
+
+/* Container */
+.stContainer {
+    background-color: #16213e;
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px solid #4169E1;
+}
+
+/* Barre de recherche */
+.stSelectbox > div, .stTextInput > div > div {
+    background-color: #16213e !important;
+    border: 2px solid #4169E1 !important;
+    border-radius: 8px !important;
+    color: white !important;
+}
+
+/* Boutons */
+.stButton > button {
+    background-color: #4169E1;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    font-weight: bold;
+}
+
+.stButton > button:hover {
+    background-color: #FFD700;
+    color: #1a1a2e;
+    transform: scale(1.02);
+}
+
+/* Sidebar */
+[data-testid="stSidebar"] {
+    background-color: #0f0f1a;
+    border-right: 2px solid #4169E1;
+}
+
+/* Métriques */
+[data-testid="metric-container"] {
+    background-color: #16213e;
+    border-radius: 10px;
+    padding: 1rem;
+    border-left: 4px solid #FFD700;
+}
+
+/* Captions des images */
+.stImage > div > div {
+    color: #FFD700 !important;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+/* Dataframes */
+[data-testid="stDataFrame"] {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #4169E1;
+}
+
+/* Séparateurs */
+hr {
+    border-color: #4169E1 !important;
+    opacity: 0.4;
+}
