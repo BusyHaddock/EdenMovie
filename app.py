@@ -45,21 +45,53 @@ def reco_movie(movie: str):
     df_reco = df_movies[df_movies['id'].isin(ids_voisins)]
     return df_reco
 
-# Création de la side bar
-st.sidebar.header("Movie Recommendation")
-st.sidebar.write("___")
-
 st.set_page_config(layout="wide")
+
+# Masquer le menu de pages automatique de Streamlit si vous utilisez un système de navigation personnalisé.
+st.markdown(
+    """
+    <style>
+    div[data-testid="stSidebarNav"] {
+        display: none;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Création de la side bar
+st.sidebar.markdown(
+    """
+    <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
+        <span class='gold-texture'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
+    </h1>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.sidebar.markdown("---")
+
+# Navigation personnalisée sans emojis dupliqués
+st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
+st.sidebar.page_link("pages/main.py", label="Recherche", icon="🔍")
+st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
+st.sidebar.markdown("---")
+st.sidebar.page_link("pages/main.py", label="A propos", icon="ℹ️")
 
 # création de alias container
 c = st.container()
 
 # Affichage de la page main
 
-st.header("Bienvenue sur Movie Recommendation")
-st.markdown("""
-    <h1><span style='color:white;'>MOVIE</span><span style='color:#4169E1;'>DEN</span></h1>
-""", unsafe_allow_html=True)
+st.markdown(
+    """
+    <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
+        <span style='color:#4169E1;'>Bienvenue sur </span>
+        <span class='gold-texture'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
+    </h1>
+    """,
+    unsafe_allow_html=True,
+)
 
 st.subheader("Le paradis du cinéma")
 st.write('___')
@@ -86,9 +118,15 @@ with st.container(border=True):
             with col:
                 st.image(
                     f"{source}{df_reco_clean['poster_path'].iloc[i]}",
-                    use_container_width=True,
-                    caption=df_reco_clean['title'].iloc[i]
+                    use_container_width=True
                 )
+                st.write(f"**{df_reco_clean['title'].iloc[i]}**")
+                # Afficher les genres
+                genres = eval(df_reco_clean['genres'].iloc[i]) if isinstance(df_reco_clean['genres'].iloc[i], str) else df_reco_clean['genres'].iloc[i]
+                st.caption(", ".join(genres) if isinstance(genres, list) else str(genres))
+                # Afficher la note avec une étoile
+                note = df_reco_clean['vote_average'].iloc[i]
+                st.caption(f"⭐ {note:.1f}/10")
     else:
         st.subheader("🔥 Les films les plus populaires :")
         cols = st.columns(3, gap="large")
@@ -96,6 +134,12 @@ with st.container(border=True):
             with col:
                 st.image(
                     f"{source}{df_first['poster_path'].iloc[i]}",
-                    use_container_width=True,
-                    caption=df_first['title'].iloc[i]
+                    use_container_width=True
                 )
+                st.write(f"**{df_first['title'].iloc[i]}**")
+                # Afficher les genres
+                genres = eval(df_first['genres'].iloc[i]) if isinstance(df_first['genres'].iloc[i], str) else df_first['genres'].iloc[i]
+                st.caption(", ".join(genres) if isinstance(genres, list) else str(genres))
+                # Afficher la note avec une étoile
+                note = df_first['vote_average'].iloc[i]
+                st.caption(f"⭐ {note:.1f}/10")
