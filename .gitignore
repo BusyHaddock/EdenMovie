@@ -1,0 +1,15 @@
+
+
+# Fichiers CSV à la racine
+df_KNN.csv
+df_reco_animefiltré.csv
+df_reco_GVote.csv
+df_reco2.csv
+df_reco3.csv
+
+# Notebooks
+DigData_ML.ipynb
+ML_projet2.ipynb
+
+# Environnement virtuel
+.venv/
