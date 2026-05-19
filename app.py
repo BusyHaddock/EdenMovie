@@ -63,7 +63,7 @@ st.markdown(
 st.sidebar.markdown(
     """
     <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
-        <span class='gold-texture'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
+        <span class='white'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
     </h1>
     """,
     unsafe_allow_html=True,
@@ -82,16 +82,32 @@ st.sidebar.page_link("pages/main.py", label="A propos", icon="ℹ️")
 c = st.container()
 
 # Affichage de la page main
+logo_path_eden = os.path.join(BASE_DIR, "assets", "uploads", "Logo eden.png")
 
-st.markdown(
-    """
-    <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
-        <span style='color:#4169E1;'>Bienvenue sur </span>
-        <span class='gold-texture'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
-    </h1>
-    """,
-    unsafe_allow_html=True,
-)
+if os.path.exists(logo_path_eden):
+    col_logo, col_title = st.columns([1, 11])
+    with col_logo:
+        st.image(logo_path_eden, width=100)
+    with col_title:
+        st.markdown(
+            """
+            <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
+                <span style='color:#4169E1;'>Bienvenue sur </span>
+                <span class='white'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
+            </h1>
+            """,
+            unsafe_allow_html=True,
+        )
+else:
+    st.markdown(
+        """
+        <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
+            <span style='color:#4169E1;'>Bienvenue sur </span>
+            <span class='white'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
+        </h1>
+        """,
+        unsafe_allow_html=True,
+    )
 
 st.subheader("Le paradis du cinéma")
 st.write('___')
@@ -99,47 +115,76 @@ st.write('___')
 # source des images d'affiche de film
 source = "https://image.tmdb.org/t/p/original/"
 
-df_first = df_movies.sort_values(by='popularity', ascending=False).head(3)
+df_popular = df_movies.sort_values(by='popularity', ascending=False).reset_index(drop=True)
 
+# Bannière du film #1 (backdrop si disponible)
+if not df_popular.empty:
+    top1 = df_popular.iloc[0]
+    banner_src = top1['backdrop_path'] if pd.notna(top1.get('backdrop_path', '')) and top1['backdrop_path'] != '' else top1['poster_path']
+    if pd.notna(banner_src) and banner_src != '':
+        st.image(f"{source}{banner_src}", width=True)
+    st.markdown(f"\n### {top1['title']}")
+    yt_search = f"https://www.youtube.com/results?search_query={top1['title'].replace(' ', '+')}+bande+annonce"
+    st.markdown(f'<a href="{yt_search}" target="_blank" style="float:right; padding:8px 12px; background:#4169E1; color:white; border-radius:6px; text-decoration:none;">Voir la bande annonce</a>', unsafe_allow_html=True)
 
-movie_input = st.selectbox(
-    "Quel est le dernier film que vous avez aimé ?",
-    options=[""] + sorted(df_movies['title'].tolist()),
-    index=0,
-    placeholder="Rechercher un film..."
-)
+# Top 10 affiches avec bouton 'Afficher plus'
+st.subheader("🔥 Top 10 des films les plus populaires")
+top10 = df_popular.head(10)
+if 'show_more' not in st.session_state:
+    st.session_state.show_more = False
 
-with st.container(border=True):
-    if movie_input:
-        df_reco_clean = reco_movie(movie_input).reset_index(drop=True)
-        st.subheader("🎬 Nous vous recommandons :")
+cols_main, col_btn = st.columns([11, 1])
+with cols_main:
+    for row in range(2):
         cols = st.columns(5, gap="medium")
         for i, col in enumerate(cols):
+            idx = row * 5 + i
+            if idx < len(top10):
+                movie = top10.iloc[idx]
+                with col:
+                    st.image(f"{source}{movie['poster_path']}", use_container_width=True)
+                    st.write(f"**{movie['title']}**")
+                    genres = eval(movie['genres']) if isinstance(movie['genres'], str) else movie['genres']
+                    st.caption(", ".join(genres) if isinstance(genres, list) else str(genres))
+                    note = movie['vote_average']
+                    st.caption(f"⭐ {note:.1f}/10")
+with col_btn:
+    if st.button("Afficher plus"):
+        st.session_state.show_more = not st.session_state.show_more
+
+if st.session_state.show_more:
+    more = df_popular.iloc[10:20]
+    for row_start in range(0, len(more), 5):
+        cols = st.columns(5, gap="medium")
+        for i in range(5):
+            idx = row_start + i
+            if idx < len(more):
+                movie = more.iloc[idx]
+                with cols[i]:
+                    st.image(f"{source}{movie['poster_path']}", use_container_width=True)
+                    st.write(f"**{movie['title']}**")
+
+# Section films à venir
+st.subheader("🎬 Films à venir")
+today = pd.to_datetime('today').normalize()
+df_movies['release_date_parsed'] = pd.to_datetime(df_movies['release_date'], errors='coerce')
+upcoming = df_movies[df_movies['release_date_parsed'] > today].sort_values('release_date_parsed').head(6).reset_index(drop=True)
+if not upcoming.empty:
+    cols = st.columns(3, gap="large")
+    for i, col in enumerate(cols):
+        if i < len(upcoming):
+            movie = upcoming.iloc[i]
             with col:
-                st.image(
-                    f"{source}{df_reco_clean['poster_path'].iloc[i]}",
-                    use_container_width=True
-                )
-                st.write(f"**{df_reco_clean['title'].iloc[i]}**")
-                # Afficher les genres
-                genres = eval(df_reco_clean['genres'].iloc[i]) if isinstance(df_reco_clean['genres'].iloc[i], str) else df_reco_clean['genres'].iloc[i]
-                st.caption(", ".join(genres) if isinstance(genres, list) else str(genres))
-                # Afficher la note avec une étoile
-                note = df_reco_clean['vote_average'].iloc[i]
-                st.caption(f"⭐ {note:.1f}/10")
-    else:
-        st.subheader("🔥 Les films les plus populaires :")
-        cols = st.columns(3, gap="large")
-        for i, col in enumerate(cols):
-            with col:
-                st.image(
-                    f"{source}{df_first['poster_path'].iloc[i]}",
-                    use_container_width=True
-                )
-                st.write(f"**{df_first['title'].iloc[i]}**")
-                # Afficher les genres
-                genres = eval(df_first['genres'].iloc[i]) if isinstance(df_first['genres'].iloc[i], str) else df_first['genres'].iloc[i]
-                st.caption(", ".join(genres) if isinstance(genres, list) else str(genres))
-                # Afficher la note avec une étoile
-                note = df_first['vote_average'].iloc[i]
-                st.caption(f"⭐ {note:.1f}/10")
+                st.image(f"{source}{movie['poster_path']}", use_container_width=True)
+                st.write(f"**{movie['title']}**")
+                st.caption(movie['release_date'])
+else:
+    st.write("Aucun film à venir trouvé.")
+
+# Sidebar footer: Powered by DigData + zone  logo
+st.sidebar.markdown("---")
+st.sidebar.markdown("<div style='font-size:12px; color:gray;'>Powered by DigData</div>", unsafe_allow_html=True)
+logo_path = os.path.join(BASE_DIR, "assets", "uploads", "logo.png")
+
+if os.path.exists(logo_path):
+    st.sidebar.image(logo_path, width=40)
