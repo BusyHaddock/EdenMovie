@@ -3,7 +3,47 @@ import pandas as pd
 import os
 
 # Configuration de la page
+# import du style css
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+local_css("assets/style.css")
+
 st.set_page_config(layout="wide")
+
+# Masquer le menu de pages automatique de Streamlit si vous utilisez un système de navigation personnalisé.
+st.markdown(
+    """
+    <style>
+    div[data-testid="stSidebarNav"] {
+        display: none;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Création de la side bar
+st.sidebar.markdown(
+    """
+    <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
+        <span class='white'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
+    </h1>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.sidebar.markdown("---")
+
+# Navigation personnalisée sans emojis dupliqués
+st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
+st.sidebar.page_link("pages/recherche_film.py", label="Recherche", icon="🔍")  #kk
+st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
+st.sidebar.markdown("---")
+st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
+
+
 
 # Chargement des données
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
