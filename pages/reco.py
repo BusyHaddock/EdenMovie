@@ -118,7 +118,7 @@ if movie_input:
         for i, col in enumerate(cols):
             if i < len(results):
                 with col:
-                    st.image(source_img + results.loc[i, "poster_path"], use_container_width=True)
+                    st.image(f"{source_img}{results.loc[i, 'poster_path']}", use_container_width=True)
                     st.markdown(f"**{results.loc[i, 'title']}**")
 
                     # genres safe
