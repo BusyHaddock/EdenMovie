@@ -128,8 +128,8 @@ if not df_popular.empty:
     st.markdown(f'<a href="{yt_search}" target="_blank" style="float:right; padding:8px 12px; background:#4169E1; color:white; border-radius:6px; text-decoration:none;">Voir la bande annonce</a>', unsafe_allow_html=True)
 
 # Top 10 affiches avec bouton 'Afficher plus'
-st.subheader("🔥 Top 10 des films les plus populaires")
-top10 = df_popular.head(10)
+st.subheader("🔥 Films les plus populaires")
+top10 = df_popular.head(5)
 if 'show_more' not in st.session_state:
     st.session_state.show_more = False
 
@@ -149,11 +149,13 @@ with cols_main:
                     note = movie['vote_average']
                     st.caption(f"⭐ {note:.1f}/10")
 with col_btn:
-    if st.button("Afficher plus"):
+    label = "Afficher moins" if st.session_state.show_more else "Afficher plus"
+    if st.button(label):
         st.session_state.show_more = not st.session_state.show_more
+        st.rerun()
 
 if st.session_state.show_more:
-    more = df_popular.iloc[10:20]
+    more = df_popular.iloc[5:10]
     for row_start in range(0, len(more), 5):
         cols = st.columns(5, gap="medium")
         for i in range(5):
