@@ -96,7 +96,11 @@ if search or selected_genre != "Tous":
 
         st.markdown("---")
 
-        st.subheader(f"🎬 {movie['title']}")
+        st.markdown(f"""
+            <div class="detail-card">
+                <h2>🎬 {movie['title']}</h2>
+            </div>
+            """, unsafe_allow_html=True)
 
         col1, col2 = st.columns([1, 2])
 
@@ -110,22 +114,44 @@ if search or selected_genre != "Tous":
 
         with col2:
 
-            st.write(f"⭐ Note : {movie['vote_average']:.1f}/10")
+            st.markdown(f"""
+                <div class="movie-detail-info">
+                ⭐ <b>Note :</b> {movie['vote_average']:.1f}/10
+                </div>
+                """, unsafe_allow_html=True)
 
-            st.write(f"📅 Date : {movie['release_date']}")
+            st.markdown(f"""
+                <div class="movie-detail-info">
+                📅 <b>Date :</b> {movie['release_date']}
+                </div>
+                """, unsafe_allow_html=True)
 
             try:
                 genres = eval(movie['genres'])
 
                 if isinstance(genres, list):
-                    st.write(f"🎭 Genres : {' • '.join(genres)}")
+                    st.markdown(f"""
+                    <div class="movie-detail-info">
+                    🎭 <b>Genres :</b> {' • '.join(genres)}
+                    </div>
+                    """, unsafe_allow_html=True)
 
             except:
                 pass
 
             if 'overview' in movie:
-                st.write("### 📝 Synopsis")
-                st.write(movie['overview'])
+
+                st.markdown("""
+                <h3 style='margin-top:25px;'>
+                📝 Synopsis
+                </h3>
+                """, unsafe_allow_html=True)
+
+                st.markdown(f"""
+                <div class="synopsis-box">
+                {movie['overview']}
+                </div>
+                """, unsafe_allow_html=True)
 
             if "favoris" not in st.session_state:
                 st.session_state["favoris"] = []
@@ -139,12 +165,48 @@ if search or selected_genre != "Tous":
                 st.rerun()
 
     source = "https://image.tmdb.org/t/p/original/"
-    cols = st.columns(4)
 
-    for index, (_, movie) in enumerate(results.head(100).iterrows()):
+# Pagination
+films_par_page = 20
 
-        with cols[index % 4]:
+total_pages = (len(results) - 1) // films_par_page + 1
 
+if "page" not in st.session_state:
+    st.session_state["page"] = 1
+
+col_prev, col_page, col_next = st.columns([1, 2, 1])
+
+with col_prev:
+    if st.button("⬅️ Précédent") and st.session_state["page"] > 1:
+        st.session_state["page"] -= 1
+        st.rerun()
+
+with col_page:
+    st.markdown(
+        f"<h4 style='text-align:center;'>Page {st.session_state['page']} / {total_pages}</h4>",
+        unsafe_allow_html=True
+    )
+
+with col_next:
+    if st.button("Suivant ➡️") and st.session_state["page"] < total_pages:
+        st.session_state["page"] += 1
+        st.rerun()
+
+page = st.session_state["page"]
+
+start = (page - 1) * films_par_page
+end = start + films_par_page
+
+results_page = results.iloc[start:end]
+
+st.write(f"Page {page} / {total_pages}")
+
+cols = st.columns(5)
+
+for index, (_, movie) in enumerate(results_page.iterrows()):
+
+        with cols[index % 5]:
+            source = "https://image.tmdb.org/t/p/original/"
             poster = f"{source}{movie['poster_path']}"
 
             try:
