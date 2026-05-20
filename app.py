@@ -58,9 +58,13 @@ st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
 c = st.container()
 
 # Affichage de la page main
-logo_path_eden = os.path.join(BASE_DIR, "assets", "uploads", " ")
+logo_candidates = [
+    os.path.join(BASE_DIR, "assets", "uploads", "logo.png"),
+    os.path.join(BASE_DIR, "assets", "uploads", "Logo eden.png"),
+]
+logo_path_eden = next((path for path in logo_candidates if os.path.exists(path)), None)
 
-if os.path.exists(logo_path_eden):
+if logo_path_eden:
     col_logo, col_title = st.columns([1, 11])
     with col_logo:
         st.image(logo_path_eden, width=100)

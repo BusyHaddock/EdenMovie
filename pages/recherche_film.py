@@ -12,7 +12,7 @@ df_movies = pd.read_csv(os.path.join(BASE_DIR, "data", "df_final.csv"))
 df_movies = df_movies.head(1000)
 
 # Supporter l'ouverture d'un film depuis la page d'accueil via le paramètre URL `movie_id`
-params = st.experimental_get_query_params()
+params = st.query_params
 if 'movie_id' in params and 'selected_movie' not in st.session_state:
     try:
         movie_id_param = int(params['movie_id'][0])
@@ -20,8 +20,8 @@ if 'movie_id' in params and 'selected_movie' not in st.session_state:
         if not movie_row.empty:
             st.session_state['selected_movie'] = movie_row.iloc[0]
             # Nettoyer les query params pour éviter une boucle et recharger la page
-            st.experimental_set_query_params()
-            st.experimental_rerun()
+            st.query_params = {}
+            st.rerun()
     except Exception:
         pass
 
