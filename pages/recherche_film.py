@@ -4,51 +4,26 @@ import os
 
 # Configuration de la page
 st.set_page_config(layout="wide")
-st.markdown("""
-<style>
-.stApp {
-    background: linear-gradient(to bottom, #0B0F19, #111827);
-    color: white;
-}
-
-.movie-card {
-    background-color: #161B22;
-    padding: 14px;
-    border-radius: 16px;
-    margin-bottom: 25px;
-    transition: 0.3s;
-    box-shadow: 0 0 12px rgba(0,0,0,0.4);
-}
-
-.movie-card:hover {
-    transform: translateY(-8px) scale(1.03);
-    box-shadow: 0 0 30px rgba(65,105,225,0.7);
-}
-
-.movie-card img {
-    width: 100%;
-    border-radius: 14px;
-}
-
-.movie-title {
-    font-size: 19px;
-    font-weight: bold;
-    color: white;
-    margin-top: 12px;
-}
-
-.movie-info {
-    color: #B8C1CC;
-    font-size: 14px;
-}
-</style>
-""", unsafe_allow_html=True)
 
 # Chargement des données
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 df_movies = pd.read_csv(os.path.join(BASE_DIR, "data", "df_final.csv"))
 df_movies = df_movies.head(1000)
+
+# Supporter l'ouverture d'un film depuis la page d'accueil via le paramètre URL `movie_id`
+params = st.experimental_get_query_params()
+if 'movie_id' in params and 'selected_movie' not in st.session_state:
+    try:
+        movie_id_param = int(params['movie_id'][0])
+        movie_row = df_movies[df_movies['id'] == movie_id_param]
+        if not movie_row.empty:
+            st.session_state['selected_movie'] = movie_row.iloc[0]
+            # Nettoyer les query params pour éviter une boucle et recharger la page
+            st.experimental_set_query_params()
+            st.experimental_rerun()
+    except Exception:
+        pass
 
 all_genres = []
 
