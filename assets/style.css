@@ -1,34 +1,15 @@
 /* Fond principal */
 .stApp {
-    background-color: #1a1a2e;
+    background: linear-gradient(to bottom, #0B0F19, #111827);
+    color: white;
 }
-
 /* Titres */
 h1 {
     color: #e2e0d3 !important;
     font-family: 'Segoe UI', sans-serif !important;
     letter-spacing: 2px;
 }
-.gold-texture {
-    display: inline-block;
-    position: relative;
-    background: linear-gradient(135deg, #f8e38f 0%, #d4af37 25%, #af8b2f 50%, #e0c165 75%, #bc982f 100%);
-    background-size: 200% 200%;
-    -background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: #d4af37;
-    text-shadow: 0 0 2px rgba(0,0,0,0.2);
-}
 
-.gold-texture::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background: radial-gradient(circle at 20% 20%, rgba(255,255,255,0.45), transparent 18%),
-                linear-gradient(90deg, rgba(255,255,255,0.08), transparent 40%, rgba(0,0,0,0.08));
-    mix-blend-mode: overlay;
-}
 h2, h3 {
     color: #4169E1 !important;
     font-family: 'Segoe UI', sans-serif !important;
@@ -103,4 +84,42 @@ p, label, .stMarkdown {
 hr {
     border-color: #4169E1 !important;
     opacity: 0.4;
+}
+
+.movie-card {
+    background-color: #161B22;
+    padding: 14px;
+    border-radius: 16px;
+    margin-bottom: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 12px rgba(0,0,0,0.4);
+    overflow: hidden;
+}
+
+.movie-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 0 30px rgba(65,105,225,0.7);
+}
+
+.movie-card img {
+    width: 100%;
+    border-radius: 14px;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.movie-card:hover img {
+    transform: scale(1.05);
+}
+
+.movie-title {
+    font-size: 19px;
+    font-weight: bold;
+    color: white;
+    margin-top: 12px;
+}
+
+.movie-info {
+    color: #B8C1CC;
+    font-size: 14px;
 }
