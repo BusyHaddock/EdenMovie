@@ -12,6 +12,46 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 df_movies = pd.read_csv(os.path.join(BASE_DIR, "data", "df_final.csv"))
 df_ml = pd.read_csv(os.path.join(BASE_DIR, "data", "df_reco_clean.csv"))
 
+st.markdown("""
+<style>
+.stApp {
+    background-color: #0E1117;
+    color: white;
+}
+
+.movie-card {
+    background-color: #161B22;
+    padding: 14px;
+    border-radius: 16px;
+    margin-bottom: 25px;
+    transition: 0.3s;
+    box-shadow: 0 0 12px rgba(0,0,0,0.4);
+}
+
+.movie-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 22px rgba(30,144,255,0.5);
+}
+
+.movie-card img {
+    width: 100%;
+    border-radius: 14px;
+}
+
+.movie-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    margin-top: 12px;
+}
+
+.movie-info {
+    color: #B8C1CC;
+    font-size: 14px;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # import du style css
 def local_css(file_name):
     with open(file_name) as f:
@@ -73,7 +113,7 @@ st.sidebar.markdown("---")
 
 # Navigation personnalisée sans emojis dupliqués
 st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
-st.sidebar.page_link("pages/main.py", label="Recherche", icon="🔍")
+st.sidebar.page_link("pages/recherche_film.py", label="Recherche", icon="🔍")  #kk
 st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
 st.sidebar.markdown("---")
 st.sidebar.page_link("pages/main.py", label="A propos", icon="ℹ️")
