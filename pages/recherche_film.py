@@ -18,16 +18,22 @@ st.markdown("""
     margin-bottom: 25px;
     transition: 0.3s;
     box-shadow: 0 0 12px rgba(0,0,0,0.4);
+    overflow: hidden;
 }
 
 .movie-card:hover {
-    transform: translateY(-8px) scale(1.03);
-    box-shadow: 0 0 30px rgba(65,105,225,0.7);
+    transform: translateY(-10px) scale(1.04);
+    box-shadow: 0 0 35px rgba(59,130,246,0.9);
+    cursor: pointer;
 }
 
 .movie-card img {
     width: 100%;
     border-radius: 14px;
+    transition: 0.3s;
+}
+.movie-card:hover img {
+    transform: scale(1.08);
 }
 
 .movie-title {
@@ -41,6 +47,51 @@ st.markdown("""
     color: #B8C1CC;
     font-size: 14px;
 }
+            .stButton > button {
+    background-color: #2563EB;
+    color: white;
+    border-radius: 12px;
+    border: none;
+    padding: 8px 14px;
+    width: 100%;
+    font-weight: bold;
+}
+
+.stButton > button:hover {
+    background-color: #1D4ED8;
+    color: white;
+    transform: scale(1.02);
+    transition: 0.2s;
+}
+.detail-card {
+    background: rgba(17, 24, 39, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 28px;
+    border-radius: 24px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 0 30px rgba(37,99,235,0.25);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+.movie-detail-info {
+    background-color: #1E293B;
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    font-size: 16px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.25);
+}         
+.synopsis-box {
+    background-color: #111827;
+    padding: 18px;
+    border-radius: 16px;
+    line-height: 1.8;
+    font-size: 15px;
+    color: #E5E7EB;
+    box-shadow: 0 0 18px rgba(0,0,0,0.25);
+    border-left: 4px solid #2563EB;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -48,8 +99,6 @@ st.markdown("""
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 df_movies = pd.read_csv(os.path.join(BASE_DIR, "data", "df_final.csv"))
-df_movies = df_movies.head(1000)
-
 all_genres = []
 
 for genres in df_movies["genres"].dropna():
@@ -121,7 +170,11 @@ if search or selected_genre != "Tous":
 
         st.markdown("---")
 
-        st.subheader(f"🎬 {movie['title']}")
+        st.markdown(f"""
+            <div class="detail-card">
+                <h2>🎬 {movie['title']}</h2>
+            </div>
+            """, unsafe_allow_html=True)
 
         col1, col2 = st.columns([1, 2])
 
@@ -135,22 +188,44 @@ if search or selected_genre != "Tous":
 
         with col2:
 
-            st.write(f"⭐ Note : {movie['vote_average']:.1f}/10")
+            st.markdown(f"""
+                <div class="movie-detail-info">
+                ⭐ <b>Note :</b> {movie['vote_average']:.1f}/10
+                </div>
+                """, unsafe_allow_html=True)
 
-            st.write(f"📅 Date : {movie['release_date']}")
+            st.markdown(f"""
+                <div class="movie-detail-info">
+                📅 <b>Date :</b> {movie['release_date']}
+                </div>
+                """, unsafe_allow_html=True)
 
             try:
                 genres = eval(movie['genres'])
 
                 if isinstance(genres, list):
-                    st.write(f"🎭 Genres : {' • '.join(genres)}")
+                    st.markdown(f"""
+                    <div class="movie-detail-info">
+                    🎭 <b>Genres :</b> {' • '.join(genres)}
+                    </div>
+                    """, unsafe_allow_html=True)
 
             except:
                 pass
 
             if 'overview' in movie:
-                st.write("### 📝 Synopsis")
-                st.write(movie['overview'])
+
+                st.markdown("""
+                <h3 style='margin-top:25px;'>
+                📝 Synopsis
+                </h3>
+                """, unsafe_allow_html=True)
+
+                st.markdown(f"""
+                <div class="synopsis-box">
+                {movie['overview']}
+                </div>
+                """, unsafe_allow_html=True)
 
             if "favoris" not in st.session_state:
                 st.session_state["favoris"] = []
@@ -164,12 +239,48 @@ if search or selected_genre != "Tous":
                 st.rerun()
 
     source = "https://image.tmdb.org/t/p/original/"
-    cols = st.columns(4)
 
-    for index, (_, movie) in enumerate(results.head(100).iterrows()):
+# Pagination
+films_par_page = 20
 
-        with cols[index % 4]:
+total_pages = (len(results) - 1) // films_par_page + 1
 
+if "page" not in st.session_state:
+    st.session_state["page"] = 1
+
+col_prev, col_page, col_next = st.columns([1, 2, 1])
+
+with col_prev:
+    if st.button("⬅️ Précédent") and st.session_state["page"] > 1:
+        st.session_state["page"] -= 1
+        st.rerun()
+
+with col_page:
+    st.markdown(
+        f"<h4 style='text-align:center;'>Page {st.session_state['page']} / {total_pages}</h4>",
+        unsafe_allow_html=True
+    )
+
+with col_next:
+    if st.button("Suivant ➡️") and st.session_state["page"] < total_pages:
+        st.session_state["page"] += 1
+        st.rerun()
+
+page = st.session_state["page"]
+
+start = (page - 1) * films_par_page
+end = start + films_par_page
+
+results_page = results.iloc[start:end]
+
+st.write(f"Page {page} / {total_pages}")
+
+cols = st.columns(5)
+
+for index, (_, movie) in enumerate(results_page.iterrows()):
+
+        with cols[index % 5]:
+            source = "https://image.tmdb.org/t/p/original/"
             poster = f"{source}{movie['poster_path']}"
 
             try:
