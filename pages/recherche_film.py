@@ -2,95 +2,13 @@ import streamlit as st
 import pandas as pd
 import os
 
+
 # Configuration de la page
 st.set_page_config(layout="wide")
 st.markdown("""
 <style>
-.stApp {
-    background: linear-gradient(to bottom, #0B0F19, #111827);
-    color: white;
-}
-
-.movie-card {
-    background-color: #161B22;
-    padding: 14px;
-    border-radius: 16px;
-    margin-bottom: 25px;
-    transition: 0.3s;
-    box-shadow: 0 0 12px rgba(0,0,0,0.4);
-    overflow: hidden;
-}
-
-.movie-card:hover {
-    transform: translateY(-10px) scale(1.04);
-    box-shadow: 0 0 35px rgba(59,130,246,0.9);
-    cursor: pointer;
-}
-
-.movie-card img {
-    width: 100%;
-    border-radius: 14px;
-    transition: 0.3s;
-}
-.movie-card:hover img {
-    transform: scale(1.08);
-}
-
-.movie-title {
-    font-size: 19px;
-    font-weight: bold;
-    color: white;
-    margin-top: 12px;
-}
-
-.movie-info {
-    color: #B8C1CC;
-    font-size: 14px;
-}
-            .stButton > button {
-    background-color: #2563EB;
-    color: white;
-    border-radius: 12px;
-    border: none;
-    padding: 8px 14px;
-    width: 100%;
-    font-weight: bold;
-}
-
-.stButton > button:hover {
-    background-color: #1D4ED8;
-    color: white;
-    transform: scale(1.02);
-    transition: 0.2s;
-}
-.detail-card {
-    background: rgba(17, 24, 39, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 28px;
-    border-radius: 24px;
-    margin-top: 25px;
-    margin-bottom: 25px;
-    box-shadow: 0 0 30px rgba(37,99,235,0.25);
-    border: 1px solid rgba(255,255,255,0.08);
-}
-.movie-detail-info {
-    background-color: #1E293B;
-    padding: 12px 16px;
-    border-radius: 12px;
-    margin-bottom: 12px;
-    font-size: 16px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.25);
-}         
-.synopsis-box {
-    background-color: #111827;
-    padding: 18px;
-    border-radius: 16px;
-    line-height: 1.8;
-    font-size: 15px;
-    color: #E5E7EB;
-    box-shadow: 0 0 18px rgba(0,0,0,0.25);
-    border-left: 4px solid #2563EB;
+div[data-testid="stSidebarNav"] {
+    display: none;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -99,6 +17,12 @@ st.markdown("""
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 df_movies = pd.read_csv(os.path.join(BASE_DIR, "data", "df_final.csv"))
+
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+local_css("assets/style.css")
 all_genres = []
 
 for genres in df_movies["genres"].dropna():
