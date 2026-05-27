@@ -1,13 +1,13 @@
 # import des librairie utiles
 import os
 import streamlit as st
+from streamlit_authenticator import Authenticate
 import pandas as pd
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
-
+#from sidebar import afficher_sidebar
 
 # import des données
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 df_movies = pd.read_csv(os.path.join(BASE_DIR, "data", "df_final.csv"))
 df_ml = pd.read_csv(os.path.join(BASE_DIR, "data", "df_reco_clean.csv"))
@@ -76,7 +76,11 @@ st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
 st.sidebar.page_link("pages/main.py", label="Recherche", icon="🔍")
 st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
 st.sidebar.markdown("---")
-st.sidebar.page_link("pages/main.py", label="A propos", icon="ℹ️")
+st.sidebar.page_link("pages/connection.py", label="Se connecter", icon="🔐")
+st.sidebar.page_link("pages/creation_compte.py", label="Création de compte", icon="➕")
+st.sidebar.markdown("---")
+st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
+
 
 # création de alias container
 c = st.container()
