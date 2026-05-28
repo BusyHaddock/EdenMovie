@@ -3,15 +3,12 @@ import os
 import streamlit as st
 import pandas as pd
 import numpy as np
-from sklearn.neighbors import NearestNeighbors
-
 
 # import des données
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 df_movies = pd.read_csv(os.path.join(BASE_DIR, "data", "df_final.csv"))
 df_ml = pd.read_csv(os.path.join(BASE_DIR, "data", "df_reco_clean.csv"))
-
 
 
 # import du style css
