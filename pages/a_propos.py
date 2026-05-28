@@ -53,5 +53,5 @@ st.subheader("Coordonnées du Cinéma :")
 st.write("Adresse : Place Saint Jacques, 23300, LA SOUTERRAINE, Creuse (23)")
 st.write("Téléphone : 05 55 89 51 71")
 st.write("E-mail : eden@mjclasout.fr")
-st.image("Eden.png")
+st.image("assets/Eden.png")
 
