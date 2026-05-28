@@ -4,13 +4,14 @@ import streamlit as st
 from streamlit_authenticator import Authenticate
 import pandas as pd
 import numpy as np
-from sklearn.neighbors import NearestNeighbors
-#from sidebar import afficher_sidebar
+
+
 
 # import des données
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 df_movies = pd.read_csv(os.path.join(BASE_DIR, "data", "df_final.csv"))
 df_ml = pd.read_csv(os.path.join(BASE_DIR, "data", "df_reco_clean.csv"))
+
 
 # import du style css
 def local_css(file_name):
