@@ -19,31 +19,6 @@ def local_css(file_name):
 
 local_css("assets/style.css")
 
-# Entrainement du modèle de recommandation
-
-df_ml = df_ml.reset_index(drop=True)  # ← ici les index deviennent 0,1,2,3,4...
-
-features = df_ml.drop(columns=['id'])
-X = features.values
-
-model = NearestNeighbors(n_neighbors=6, metric='cosine')
-model.fit(X)
-distances, indices = model.kneighbors(X)
-
-# Fonction de recommandation
-def reco_movie(movie: str):
-    # On récupère l'id du film depuis df_final
-    id_movie = df_movies[df_movies['title'] == movie]['id'].values[0]
-    
-    # On trouve l'indice dans df_ml via l'id
-    indice_ml = df_ml[df_ml['id'] == id_movie].index[0]
-    
-    # On récupère les ids des voisins depuis df_ml
-    ids_voisins = df_ml.iloc[indices[indice_ml, 1:]]['id'].values
-    
-    # On affiche depuis df_final via les ids
-    df_reco = df_movies[df_movies['id'].isin(ids_voisins)]
-    return df_reco
 
 st.set_page_config(layout="wide")
 
