@@ -49,7 +49,7 @@ st.sidebar.markdown("---")
 
 # Navigation personnalisée sans emojis dupliqués
 st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
-st.sidebar.page_link("pages/main.py", label="Recherche", icon="🔍")
+st.sidebar.page_link("pages/recherche_film.py", label="Recherche", icon="🔍")
 st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
 st.sidebar.markdown("---")
 st.sidebar.page_link("pages/connection.py", label="Se connecter", icon="🔐")
