@@ -36,11 +36,10 @@ st.sidebar.page_link("pages/creation_compte.py", label="Création de compte", ic
 st.sidebar.markdown("---")
 st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
 
-# Affichage de la page a_propos
+# Affichage de la page connection
 st.markdown(
     """
     <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
-        <span style='color:#4169E1;'>Se connecter</span>
         <span class='gold-texture'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
     </h1>
     """,

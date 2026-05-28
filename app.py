@@ -12,14 +12,38 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 df_movies = pd.read_csv(os.path.join(BASE_DIR, "data", "df_final.csv"))
 df_ml = pd.read_csv(os.path.join(BASE_DIR, "data", "df_reco_clean.csv"))
 
-
-
 # import du style css
 def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 local_css("assets/style.css")
+
+# Entrainement du modèle de recommandation
+
+df_ml = df_ml.reset_index(drop=True)  # ← ici les index deviennent 0,1,2,3,4...
+
+features = df_ml.drop(columns=['id'])
+X = features.values
+
+model = NearestNeighbors(n_neighbors=6, metric='cosine')
+model.fit(X)
+distances, indices = model.kneighbors(X)
+
+# Fonction de recommandation
+def reco_movie(movie: str):
+    # On récupère l'id du film depuis df_final
+    id_movie = df_movies[df_movies['title'] == movie]['id'].values[0]
+    
+    # On trouve l'indice dans df_ml via l'id
+    indice_ml = df_ml[df_ml['id'] == id_movie].index[0]
+    
+    # On récupère les ids des voisins depuis df_ml
+    ids_voisins = df_ml.iloc[indices[indice_ml, 1:]]['id'].values
+    
+    # On affiche depuis df_final via les ids
+    df_reco = df_movies[df_movies['id'].isin(ids_voisins)]
+    return df_reco
 
 st.set_page_config(layout="wide")
 
@@ -39,7 +63,7 @@ st.markdown(
 st.sidebar.markdown(
     """
     <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
-        <span class='white'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
+        <span class='gold-texture'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
     </h1>
     """,
     unsafe_allow_html=True,
@@ -49,7 +73,7 @@ st.sidebar.markdown("---")
 
 # Navigation personnalisée sans emojis dupliqués
 st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
-st.sidebar.page_link("pages/recherche_film.py", label="Recherche", icon="🔍")  #kk
+st.sidebar.page_link("pages/main.py", label="Recherche", icon="🔍")
 st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
 st.sidebar.markdown("---")
 st.sidebar.page_link("pages/connection.py", label="Se connecter", icon="🔐")
@@ -62,36 +86,16 @@ st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
 c = st.container()
 
 # Affichage de la page main
-logo_candidates = [
-    os.path.join(BASE_DIR, "assets", "uploads", "logo.png"),
-    os.path.join(BASE_DIR, "assets", "uploads", "Logo eden.png"),
-]
-logo_path_eden = next((path for path in logo_candidates if os.path.exists(path)), None)
 
-if logo_path_eden:
-    col_logo, col_title = st.columns([1, 11])
-    with col_logo:
-        st.image(logo_path_eden, width=100)
-    with col_title:
-        st.markdown(
-            """
-            <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
-                <span style='color:#4169E1;'>Bienvenue sur </span>
-                <span class='white'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
-            </h1>
-            """,
-            unsafe_allow_html=True,
-        )
-else:
-    st.markdown(
-        """
-        <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
-            <span style='color:#4169E1;'>Bienvenue sur </span>
-            <span class='white'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
-        </h1>
-        """,
-        unsafe_allow_html=True,
-    )
+st.markdown(
+    """
+    <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
+        <span style='color:#4169E1;'>Bienvenue sur </span>
+        <span class='gold-texture'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
+    </h1>
+    """,
+    unsafe_allow_html=True,
+)
 
 st.subheader("Le paradis du cinéma")
 st.write('___')
@@ -99,94 +103,47 @@ st.write('___')
 # source des images d'affiche de film
 source = "https://image.tmdb.org/t/p/original/"
 
-df_popular = df_movies.sort_values(by='popularity', ascending=False).reset_index(drop=True)
+df_first = df_movies.sort_values(by='popularity', ascending=False).head(3)
 
-# Bannière du film #1 (backdrop si disponible)
-if not df_popular.empty:
-    top1 = df_popular.iloc[0]
-    banner_src = top1['backdrop_path'] if pd.notna(top1.get('backdrop_path', '')) and top1['backdrop_path'] != '' else top1['poster_path']
-    if pd.notna(banner_src) and banner_src != '':
-        st.image(f"{source}{banner_src}", use_container_width=True)
-    st.markdown(f"\n### {top1['title']}")
-    yt_search = f"https://www.youtube.com/results?search_query={top1['title'].replace(' ', '+')}+bande+annonce"
-    st.markdown(f'<a href="{yt_search}" target="_blank" style="float:right; padding:8px 12px; background:#4169E1; color:white; border-radius:6px; text-decoration:none;">Voir la bande annonce</a>', unsafe_allow_html=True)
 
-# Top 10 affiches avec bouton 'Afficher plus'
-st.subheader("🔥 Films les plus populaires")
-top5 = df_popular.head(5)
-if 'show_more' not in st.session_state:
-    st.session_state.show_more = False
+movie_input = st.selectbox(
+    "Quel est le dernier film que vous avez aimé ?",
+    options=[""] + sorted(df_movies['title'].tolist()),
+    index=0,
+    placeholder="Rechercher un film..."
+)
 
-cols = st.columns(5, gap="medium")
-for i, (_, movie) in enumerate(top5.iterrows()):
-    with cols[i]:
-        genres = eval(movie['genres']) if isinstance(movie['genres'], str) else movie['genres']
-        genres_text = ", ".join(genres) if isinstance(genres, list) else str(genres)
-        vote_avg = movie['vote_average'] if pd.notna(movie['vote_average']) else 0
-        st.markdown(f"""
-            <a href="?page=pages/recherche_film.py&movie_id={movie['id']}" style="text-decoration:none; color:inherit;">
-            <div class="movie-card">
-                <img src="{source}{movie['poster_path']}" />
-                <div class="movie-title">{movie['title']}</div>
-                <div class="movie-info">⭐ {vote_avg:.1f}/10</div>
-                <div class="movie-info">📅 {movie['release_date']}</div>
-                <div class="movie-info">🎭 {genres_text}</div>
-            </div>
-            </a>
-            """, unsafe_allow_html=True)
-
-btn_cols = st.columns([1, 1, 1, 1, 1], gap="medium")
-with btn_cols[2]:
-    label = "Afficher moins" if st.session_state.show_more else "Afficher plus"
-    if st.button(label):
-        st.session_state.show_more = not st.session_state.show_more
-        st.rerun()
-
-if st.session_state.show_more:
-    more = df_popular.iloc[5:10]
-    for row_start in range(0, len(more), 5):
+with st.container(border=True):
+    if movie_input:
+        df_reco_clean = reco_movie(movie_input).reset_index(drop=True)
+        st.subheader("🎬 Nous vous recommandons :")
         cols = st.columns(5, gap="medium")
-        for i in range(5):
-            idx = row_start + i
-            if idx < len(more):
-                movie = more.iloc[idx]
-                with cols[i]:
-                    genres = eval(movie['genres']) if isinstance(movie['genres'], str) else movie['genres']
-                    genres_text = ", ".join(genres) if isinstance(genres, list) else str(genres)
-                    vote_avg = movie['vote_average'] if pd.notna(movie['vote_average']) else 0
-                    st.markdown(f"""
-                        <a href="?page=pages/recherche_film.py&movie_id={movie['id']}" style="text-decoration:none; color:inherit;">
-                        <div class="movie-card">
-                            <img src="{source}{movie['poster_path']}" />
-                            <div class="movie-title">{movie['title']}</div>
-                            <div class="movie-info">⭐ {vote_avg:.1f}/10</div>
-                            <div class="movie-info">📅 {movie['release_date']}</div>
-                            <div class="movie-info">🎭 {genres_text}</div>
-                        </div>
-                        </a>
-                        """, unsafe_allow_html=True)
-
-# Section films à venir
-st.subheader("🎬 Films à venir")
-today = pd.to_datetime('today').normalize()
-df_movies['release_date_parsed'] = pd.to_datetime(df_movies['release_date'], errors='coerce')
-upcoming = df_movies[df_movies['release_date_parsed'] > today].sort_values('release_date_parsed').head(6).reset_index(drop=True)
-if not upcoming.empty:
-    cols = st.columns(3, gap="large")
-    for i, col in enumerate(cols):
-        if i < len(upcoming):
-            movie = upcoming.iloc[i]
+        for i, col in enumerate(cols):
             with col:
-                st.image(f"{source}{movie['poster_path']}", use_container_width=True)
-                st.write(f"**{movie['title']}**")
-                st.caption(movie['release_date'])
-else:
-    st.write("Aucun film à venir trouvé.")
-
-# Sidebar footer: Powered by DigData + zone  logo
-st.sidebar.markdown("---")
-st.sidebar.markdown("<div style='font-size:12px; color:gray;'>Powered by DigData</div>", unsafe_allow_html=True)
-logo_path = os.path.join(BASE_DIR, "assets", "uploads", "logo.png")
-
-if os.path.exists(logo_path):
-    st.sidebar.image(logo_path, width=40)
+                st.image(
+                    f"{source}{df_reco_clean['poster_path'].iloc[i]}",
+                    use_container_width=True
+                )
+                st.write(f"**{df_reco_clean['title'].iloc[i]}**")
+                # Afficher les genres
+                genres = eval(df_reco_clean['genres'].iloc[i]) if isinstance(df_reco_clean['genres'].iloc[i], str) else df_reco_clean['genres'].iloc[i]
+                st.caption(", ".join(genres) if isinstance(genres, list) else str(genres))
+                # Afficher la note avec une étoile
+                note = df_reco_clean['vote_average'].iloc[i]
+                st.caption(f"⭐ {note:.1f}/10")
+    else:
+        st.subheader("🔥 Les films les plus populaires :")
+        cols = st.columns(3, gap="large")
+        for i, col in enumerate(cols):
+            with col:
+                st.image(
+                    f"{source}{df_first['poster_path'].iloc[i]}",
+                    use_container_width=True
+                )
+                st.write(f"**{df_first['title'].iloc[i]}**")
+                # Afficher les genres
+                genres = eval(df_first['genres'].iloc[i]) if isinstance(df_first['genres'].iloc[i], str) else df_first['genres'].iloc[i]
+                st.caption(", ".join(genres) if isinstance(genres, list) else str(genres))
+                # Afficher la note avec une étoile
+                note = df_first['vote_average'].iloc[i]
+                st.caption(f"⭐ {note:.1f}/10")

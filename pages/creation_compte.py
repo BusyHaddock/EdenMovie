@@ -35,7 +35,7 @@ st.sidebar.page_link("pages/creation_compte.py", label="Création de compte", ic
 st.sidebar.markdown("---")
 st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
 
-# Affichage de la page a_propos
+# Affichage de la creation_compte
 st.markdown(
     """
     <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
@@ -45,3 +45,11 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+st.markdown("""
+# 🎬 Fonctionnalité en préparation
+
+Les développeurs de **MOVIEDEN** travaillent encore sur cette page.
+
+⏳ Revenez bientôt pour découvrir cette nouvelle fonctionnalité !
+""")
