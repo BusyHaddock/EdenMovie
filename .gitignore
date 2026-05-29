@@ -13,3 +13,6 @@ ML_projet2.ipynb
 
 # Environnement virtuel
 .venv/
+
+# Fichiers de configuration
+.streamlit/secrets.toml
