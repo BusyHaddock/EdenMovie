@@ -7,12 +7,25 @@ import numpy as np
 import ast
 import requests
 from datetime import datetime, timedelta
+from streamlit_authenticator import Authenticate
 
 # import des données
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 df_movies = pd.read_csv(os.path.join(BASE_DIR, "data", "df_film.csv"))
 df_ml = pd.read_csv(os.path.join(BASE_DIR, "data", "df_reco_clean.csv"))
+
+def afficher_barre_navigation():
+    """Affiche la barre de navigation en haut à droite avec bouton connexion/déconnexion"""
+    top_bar_cols = st.columns([10, 1.5], gap="medium")
+    with top_bar_cols[1]:
+        if st.session_state.get("authentication_status"):
+            st.write(f"👤 {st.session_state.get('name', 'Utilisateur')}")
+            if st.button("🚪 Déconnexion", key="logout_top"):
+                st.session_state["authentication_status"] = False
+                st.rerun()
+        else:
+            st.page_link("pages/connection.py", label="🔐 Se connecter")
 
 
 def parse_genres(val):
@@ -118,6 +131,9 @@ local_css("assets/style.css")
 
 st.set_page_config(layout="wide")
 
+# Barre de navigation en haut avec bouton connexion à droite
+afficher_barre_navigation()
+
 # Masquer le menu de pages automatique de Streamlit si vous utilisez un système de navigation personnalisé.
 st.markdown(
     """
@@ -146,9 +162,6 @@ st.sidebar.markdown("---")
 st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
 st.sidebar.page_link("pages/recherche_film.py", label="Recherche", icon="🔍")  #kk
 st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
-st.sidebar.markdown("---")
-st.sidebar.page_link("pages/connection.py", label="Se connecter", icon="🔐")
-st.sidebar.page_link("pages/creation_compte.py", label="Création de compte", icon="➕")
 st.sidebar.markdown("---")
 st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
 
