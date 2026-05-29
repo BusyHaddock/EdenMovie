@@ -3,6 +3,7 @@ from streamlit_authenticator import Authenticate
 import streamlit_authenticator as stauth
 import pandas as pd
 import os
+from sidebar import afficher_barre_navigation
 
 # Configuration de la page
 # import du style css
@@ -13,6 +14,9 @@ def local_css(file_name):
 local_css("assets/style.css")
 
 st.set_page_config(layout="wide")
+
+# Barre de navigation en haut avec bouton connexion à droite
+afficher_barre_navigation()
 
 # Masquer le menu de pages automatique de Streamlit si vous utilisez un système de navigation personnalisé.
 st.markdown(

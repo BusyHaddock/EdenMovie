@@ -3,6 +3,7 @@ import os
 import streamlit as st
 import pandas as pd
 import numpy as np
+from sidebar import afficher_barre_navigation
 
 # import des données
 
@@ -20,18 +21,10 @@ local_css("assets/style.css")
 
 st.set_page_config(layout="wide")
 
-# Masquer le menu de pages automatique de Streamlit si vous utilisez un système de navigation personnalisé.
-st.markdown(
-    """
-    <style>
-    div[data-testid="stSidebarNav"] {
-        display: none;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+# Barre de navigation en haut avec bouton connexion à droite
+afficher_barre_navigation()
 
+# Masquer le menu de pages automatique de Streamlit si vous utilisez un système de navigation personnalisé.
 st.markdown(
     """
     <style>
@@ -60,10 +53,8 @@ st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
 st.sidebar.page_link("pages/recherche_film.py", label="Recherche", icon="🔍")  #kk
 st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
 st.sidebar.markdown("---")
-st.sidebar.page_link("pages/connection.py", label="Se connecter", icon="🔐")
-st.sidebar.page_link("pages/creation_compte.py", label="Création de compte", icon="➕")
-st.sidebar.markdown("---")
 st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
+
 
 # création de alias container
 c = st.container()

@@ -1,5 +1,17 @@
 import streamlit as st
 
+def afficher_barre_navigation():
+    """Affiche la barre de navigation en haut à droite avec bouton connexion/déconnexion"""
+    top_bar_cols = st.columns([10, 1.5], gap="medium")
+    with top_bar_cols[1]:
+        if st.session_state.get("authentication_status"):
+            st.write(f"👤 {st.session_state.get('name', 'Utilisateur')}")
+            if st.button("🚪 Déconnexion", key="logout_top"):
+                st.session_state["authentication_status"] = False
+                st.rerun()
+        else:
+            st.page_link("pages/connection.py", label="🔐 Se connecter")
+
 def afficher_sidebar(authenticator=None):
 
     st.sidebar.markdown(

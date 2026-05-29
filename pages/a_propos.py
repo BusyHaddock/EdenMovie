@@ -5,7 +5,7 @@ from streamlit_authenticator import Authenticate
 import pandas as pd
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
-#from sidebar import afficher_sidebar
+from sidebar import afficher_barre_navigation
 
 
 # import du style css
@@ -14,6 +14,11 @@ def local_css(file_name):
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 local_css("assets/style.css")
+
+st.set_page_config(layout="wide")
+
+# Barre de navigation en haut avec bouton connexion à droite
+afficher_barre_navigation()
 
 st.markdown(
     """
@@ -76,9 +81,6 @@ if st.session_state["authentication_status"]:
     # Bouton de déconnexion
     authenticator.logout("Déconnexion", "sidebar")
 
-st.sidebar.markdown("---")
-st.sidebar.page_link("pages/connection.py", label="Se connecter", icon="🔐")
-st.sidebar.page_link("pages/creation_compte.py", label="Création de compte", icon="➕")
 st.sidebar.markdown("---")
 st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
 

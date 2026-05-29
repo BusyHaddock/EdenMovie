@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 from streamlit_authenticator import Authenticate
+from sidebar import afficher_barre_navigation
 
 # import du style css
 def local_css(file_name):
@@ -12,6 +13,9 @@ def local_css(file_name):
 local_css("assets/style.css")
 
 st.set_page_config(layout="wide")
+
+# Barre de navigation en haut avec bouton connexion à droite
+afficher_barre_navigation()
 
 # Masquer le menu de pages automatique de Streamlit si vous utilisez un système de navigation personnalisé.
 st.markdown(
