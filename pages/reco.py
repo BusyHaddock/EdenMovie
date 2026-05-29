@@ -2,6 +2,8 @@ import os
 import streamlit as st
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
+from app import afficher_barre_navigation
+from streamlit_authenticator import Authenticate
 
 
 # import du style css
@@ -12,6 +14,9 @@ def local_css(file_name):
 local_css("assets/style.css")
 
 st.set_page_config(layout="wide")
+
+# Barre de navigation en haut avec bouton connexion à droite
+afficher_barre_navigation()
 
 # Masquer le menu de pages automatique de Streamlit si vous utilisez un système de navigation personnalisé.
 st.markdown(
@@ -35,14 +40,49 @@ st.sidebar.markdown(
     unsafe_allow_html=True,
 )
 
+# Créer une instance d'authentification
+lesDonneesDesComptes = {
+    'usernames': {
+        'utilisateur': {
+            'name': 'utilisateur',
+            'password': 'utilisateurMDP',
+            'email': 'utilisateur@gmail.com',
+            'failed_login_attemps': 0,  # Sera géré automatiquement
+            'logged_in': False,          # Sera géré automatiquement
+            'role': 'utilisateur'
+        },
+        'root': {
+            'name': 'root',
+            'password': 'rootMDP',
+            'email': 'admin@gmail.com',
+            'failed_login_attemps': 0,  # Sera géré automatiquement
+            'logged_in': False,          # Sera géré automatiquement
+            'role': 'administrateur'
+        }
+    }
+}
+
+authenticator = Authenticate(
+    lesDonneesDesComptes,  # Les données des comptes
+    "cookie name",         # Le nom du cookie, un str quelconque
+    "cookie key",          # La clé du cookie, un str quelconque
+    30,                    # Le nombre de jours avant que le cookie expire
+)
+
 st.sidebar.markdown("---")
 
 # Navigation personnalisée sans emojis dupliqués
 st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
 st.sidebar.page_link("pages/recherche_film.py", label="Recherche", icon="🔍")  #kk
 st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
+
+if st.session_state["authentication_status"]:
+    # Bouton de déconnexion
+    authenticator.logout("Déconnexion", "sidebar")
+
 st.sidebar.markdown("---")
 st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
+
 
 
 
