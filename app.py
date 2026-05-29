@@ -32,6 +32,17 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.markdown(
+    """
+    <style>
+    div[data-testid="stSidebarNav"] {
+        display: none;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # Création de la side bar
 st.sidebar.markdown(
     """
@@ -48,6 +59,9 @@ st.sidebar.markdown("---")
 st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
 st.sidebar.page_link("pages/recherche_film.py", label="Recherche", icon="🔍")  #kk
 st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
+st.sidebar.markdown("---")
+st.sidebar.page_link("pages/connection.py", label="Se connecter", icon="🔐")
+st.sidebar.page_link("pages/creation_compte.py", label="Création de compte", icon="➕")
 st.sidebar.markdown("---")
 st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
 

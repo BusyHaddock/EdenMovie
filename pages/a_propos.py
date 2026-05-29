@@ -15,6 +15,17 @@ def local_css(file_name):
 
 local_css("assets/style.css")
 
+st.markdown(
+    """
+    <style>
+    div[data-testid="stSidebarNav"] {
+        display: none;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # Création de la side bar
 st.sidebar.markdown(
     """
@@ -58,7 +69,7 @@ st.sidebar.markdown("---")
 
 # Navigation personnalisée sans emojis dupliqués
 st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
-st.sidebar.page_link("pages/main.py", label="Recherche", icon="🔍")
+st.sidebar.page_link("pages/recherche_film.py", label="Recherche", icon="🔍")
 st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
 
 if st.session_state["authentication_status"]:
