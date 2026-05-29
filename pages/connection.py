@@ -91,13 +91,13 @@ def accueil():
 
       # Contenu de la première colonne : 
       with col1:
-       st.image("assets/Faire_recherche_film.png")
+       st.image("assets/uploads/Faire_recherche_film.png")
        if st.button("Faire une recherche"):
         st.switch_page("pages/recherche_film.py")
 
     # Contenu de la deuxième colonne :
       with col2:
-       st.image("assets/Demander_recommendation.png")
+       st.image("assets/uploads/Demander_recommendation.png")
        if st.button("Demander une recommandation"):
         st.switch_page("pages/reco.py")
 

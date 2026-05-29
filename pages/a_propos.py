@@ -25,12 +25,46 @@ st.sidebar.markdown(
     unsafe_allow_html=True,
 )
 
+# Créer une instance d'authentification
+lesDonneesDesComptes = {
+    'usernames': {
+        'utilisateur': {
+            'name': 'utilisateur',
+            'password': 'utilisateurMDP',
+            'email': 'utilisateur@gmail.com',
+            'failed_login_attemps': 0,  # Sera géré automatiquement
+            'logged_in': False,          # Sera géré automatiquement
+            'role': 'utilisateur'
+        },
+        'root': {
+            'name': 'root',
+            'password': 'rootMDP',
+            'email': 'admin@gmail.com',
+            'failed_login_attemps': 0,  # Sera géré automatiquement
+            'logged_in': False,          # Sera géré automatiquement
+            'role': 'administrateur'
+        }
+    }
+}
+
+authenticator = Authenticate(
+    lesDonneesDesComptes,  # Les données des comptes
+    "cookie name",         # Le nom du cookie, un str quelconque
+    "cookie key",          # La clé du cookie, un str quelconque
+    30,                    # Le nombre de jours avant que le cookie expire
+)
+
 st.sidebar.markdown("---")
 
 # Navigation personnalisée sans emojis dupliqués
 st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
 st.sidebar.page_link("pages/main.py", label="Recherche", icon="🔍")
 st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
+
+if st.session_state["authentication_status"]:
+    # Bouton de déconnexion
+    authenticator.logout("Déconnexion", "sidebar")
+
 st.sidebar.markdown("---")
 st.sidebar.page_link("pages/connection.py", label="Se connecter", icon="🔐")
 st.sidebar.page_link("pages/creation_compte.py", label="Création de compte", icon="➕")
@@ -53,5 +87,5 @@ st.subheader("Coordonnées du Cinéma :")
 st.write("Adresse : Place Saint Jacques, 23300, LA SOUTERRAINE, Creuse (23)")
 st.write("Téléphone : 05 55 89 51 71")
 st.write("E-mail : eden@mjclasout.fr")
-st.image("assets/Eden.png")
+st.image("assets/uploads/Eden.png")
 
