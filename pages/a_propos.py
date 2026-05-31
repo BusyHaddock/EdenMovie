@@ -4,7 +4,10 @@ import streamlit as st
 from app import afficher_barre_navigation, local_css, BASE_DIR
 
 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    layout="wide",
+    page_title="MOVIEDEN - A propos",
+    page_icon="ℹ️")
 # import du style css
 
 local_css(os.path.join(BASE_DIR, "assets", "style.css"))  # ← chemin absolu

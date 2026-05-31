@@ -4,7 +4,10 @@ import os
 from app import afficher_barre_navigation, local_css, BASE_DIR
 
 # TOUJOURS EN PREMIER
-st.set_page_config(layout="wide")
+st.set_page_config(
+    layout="wide",
+    page_title="MOVIEDEN - Recherche de films",
+    page_icon="🔍")
 
 # CSS et navigation
 local_css(os.path.join(BASE_DIR, "assets", "style.css"))
