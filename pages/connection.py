@@ -1,28 +1,26 @@
 # import des librairie utiles
 import os
+import base64
+import sys
 import streamlit as st
 from streamlit_authenticator import Authenticate
 import pandas as pd
 import numpy as np
 import json
-from app import afficher_barre_navigation
-
-# import du style css
-def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-
-local_css("assets/style.css")
+from app import afficher_barre_navigation, local_css, BASE_DIR
 
 st.set_page_config(layout="wide")
 
-# Barre de navigation en haut avec bouton connexion à droite
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from app import afficher_barre_navigation, local_css, BASE_DIR
+
+local_css(os.path.join(BASE_DIR, "assets", "style.css"))
 afficher_barre_navigation()
 
 # Fonction pour charger les comptes utilisateurs
 def charger_comptes():
     """Charge les comptes utilisateurs depuis le fichier JSON"""
-    chemin_comptes = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "comptes.json")
+    chemin_comptes = os.path.join(BASE_DIR, "data", "comptes.json")
     if os.path.exists(chemin_comptes):
         with open(chemin_comptes, 'r', encoding='utf-8') as f:
             return json.load(f)
@@ -50,45 +48,6 @@ def charger_comptes():
 # Charger les comptes depuis le fichier JSON
 lesDonneesDesComptes = charger_comptes()
 
-st.markdown(
-    """
-    <style>
-    div[data-testid="stSidebarNav"] {
-        display: none;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# Création de la side bar
-st.sidebar.markdown(
-    """
-    <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
-        <span class='white'>Movi</span><span style='color:#4169E1;'>EDEN</span>
-    </h1>
-    """,
-    unsafe_allow_html=True,
-)
-
-st.sidebar.markdown("---")
-
-# Navigation personnalisée sans emojis dupliqués
-st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
-st.sidebar.page_link("pages/recherche_film.py", label="Recherche", icon="🔍")
-st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
-st.sidebar.markdown("---")
-st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
-
-# Affichage de la page connection
-st.markdown(
-    """
-    <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
-        <span class='white'>Movi</span><span style='color:#4169E1;'>EDEN</span>
-    </h1>
-    """,
-    unsafe_allow_html=True,
-)
 
 authenticator = Authenticate(
     lesDonneesDesComptes,  # Les données des comptes
@@ -97,8 +56,7 @@ authenticator = Authenticate(
     30,                    # Le nombre de jours avant que le cookie expire
 )
 
-# Affichage sidebar
-#afficher_sidebar(authenticator)
+
 
 # Utiliser la méthode login pour afficher le formulaire de connexion et vérifier les informations d'identification de l'utilisateur
 authenticator.login()
@@ -162,8 +120,6 @@ elif st.session_state["authentication_status"] is None:
             st.switch_page("pages/creation_compte.py")
 
 
-local_css("assets/style.css")
-
 st.markdown("""
 <style>
 
@@ -189,3 +145,4 @@ st.markdown("""
 
 </style>
 """, unsafe_allow_html=True)
+

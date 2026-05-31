@@ -1,3 +1,4 @@
+
 /* Fond principal */
 .stApp {
     background: linear-gradient(to bottom, #0B0F19, #111827);
@@ -28,6 +29,126 @@ p, label, .stMarkdown {
     border: 1px solid #4169E1;
 }
 
+/* Sidebar réduite par défaut */
+[data-testid="stSidebar"] {
+    background-color: #0f0f1a;
+    border-right: 2px solid #4169E1;
+    width: 40px !important;
+    min-width: 40px !important;
+    transition: width 0.3s ease;
+    overflow: visible;
+}
+
+/* Agrandissement au survol */
+[data-testid="stSidebar"]:hover {
+    width: 220px !important;
+    min-width: 220px !important;
+}
+
+/* Padding intérieur */
+[data-testid="stSidebar"] > div:first-child {
+    padding: 12px 6px !important;
+}
+
+/* Supprimer le carré gris natif Streamlit */
+[data-testid="stPageLink-NavLink"] {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding-left: 0 !important;
+}
+
+[data-testid="stPageLink-NavLink"]:hover {
+    background-color: rgba(65, 105, 225, 0.15) !important;
+}
+
+/* page_link container */
+[data-testid="stSidebar"] [data-testid="stPageLink"] {
+    width: 100%;
+    border-radius: 10px;
+    margin-bottom: 4px;
+}
+
+/* Alignement icône/texte */
+[data-testid="stSidebar"] [data-testid="stPageLink"] p {
+    font-size: 1.3rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px;
+    white-space: nowrap;
+    margin: 0;
+    padding: 6px 4px;
+    justify-content: center;
+}
+
+[data-testid="stSidebar"]:hover [data-testid="stPageLink"] p {
+    justify-content: flex-start;
+}
+
+/* Mode réduit : texte caché */
+[data-testid="stSidebar"] [data-testid="stPageLink"] span:last-child {
+    display: block !important;
+}
+
+/* Mode agrandi : icône ET texte visibles */
+[data-testid="stSidebar"]:hover [data-testid="stPageLink"] span:first-child {
+    display: block !important;  /* ← remplace le none */
+}
+
+[data-testid="stSidebar"]:hover [data-testid="stPageLink"] span:last-child {
+    display: block !important;
+    white-space: nowrap;
+}
+
+/* Titre MOVIEDEN masqué en réduit */
+[data-testid="stSidebar"] > div:first-child > div:first-child [data-testid="stMarkdownContainer"] {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease, width 0.3s ease;
+}
+
+[data-testid="stSidebar"]:hover > div:first-child > div:first-child [data-testid="stMarkdownContainer"] {
+    opacity: 1;
+    width: auto;
+}
+
+/* Séparateurs */
+[data-testid="stSidebar"] hr {
+    border-color: #4169E1 !important;
+    opacity: 0.3;
+    margin: 8px 0;
+}
+
+/* Footer */
+.sidebar-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    background: rgba(15, 15, 26, 0.95);
+    border-top: 1px solid #4169E1;
+    border-radius: 0 12px 0 0;
+    transition: width 0.3s ease;
+    overflow: hidden;
+}
+
+[data-testid="stSidebar"]:hover .sidebar-footer {
+    width: 180px;
+    gap: 10px;
+    justify-content: center;
+    overflow: visible;
+}
+
+.sidebar-footer img {
+    border-radius: 12px;
+    width: 32px;
+}
+
 /* Barre de recherche */
 .stSelectbox > div, .stTextInput > div > div {
     background-color: #16213e !important;
@@ -50,12 +171,6 @@ p, label, .stMarkdown {
     background-color: #FFD700;
     color: #1a1a2e;
     transform: scale(1.02);
-}
-
-/* Sidebar */
-[data-testid="stSidebar"] {
-    background-color: #0f0f1a;
-    border-right: 2px solid #4169E1;
 }
 
 /* Métriques */
@@ -159,8 +274,19 @@ hr {
     border-radius: 18px;
     padding: 18px;
     display: flex;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 12px rgba(0,0,0,0.4);
     flex-direction: column;
     gap: 14px;
+}
+
+.upcoming-card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 0 30px rgba(65,105,225,0.7);
+}
+
+.movie-card:hover img {
+    transform: scale(1.05);
 }
 
 .upcoming-poster {
@@ -248,6 +374,7 @@ hr {
     overflow: hidden;
 }
 
+
 .top1-overlay {
     position: absolute;
     bottom: 0;
@@ -316,7 +443,9 @@ hr {
     display: flex;
     gap: 16px;
     align-items: center;
-    background: rgba(22, 27, 34, 0.95);
+    background-image: var(--poster);
+    background-size: cover;
+    background-position: center;
     border: 1px solid rgba(65, 105, 225, 0.25);
     border-radius: 18px;
     padding: 18px;
@@ -352,34 +481,3 @@ hr {
     font-size: 1.05rem;
 }
 
-[data-testid="stSidebar"] {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-}
-
-[data-testid="stSidebar"] > div:first-child {
-    /* ensure enough space for sticky footer */
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 120px;
-}
-
-.sidebar-footer {
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 16px;
-    background: rgba(15, 15, 26, 0.95);
-    border-top: 1px solid #4169E1;
-    z-index: 99;
-}
-
-.sidebar-footer img {
-    border-radius: 12px;
-}

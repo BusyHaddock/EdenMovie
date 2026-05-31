@@ -3,18 +3,16 @@ import streamlit as st
 from streamlit_authenticator import Authenticate
 import pandas as pd
 import numpy as np
-from app import afficher_barre_navigation
+from app import afficher_barre_navigation, local_css, BASE_DIR
 import json
-
-
-# import du style css
-def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-
-local_css("assets/style.css")
+import base64
 
 st.set_page_config(layout="wide")
+
+# import du style css
+
+local_css(os.path.join(BASE_DIR, "assets", "style.css"))  # ← chemin absolu
+
 
 # Barre de navigation en haut avec bouton connexion à droite
 afficher_barre_navigation()
@@ -174,3 +172,15 @@ st.markdown("""
 💡 Astuce: Votre mot de passe doit être sécurisé et différent de votre nom d'utilisateur
 </div>
 """, unsafe_allow_html=True)
+
+# Sidebar footer: Powered by DigData + zone logo
+
+logo_path = os.path.join(BASE_DIR, "assets", "uploads", "logo.png")
+footer_html = "<div class='sidebar-footer'>"
+footer_html += "<div style='font-size:12px; color:gray;'>Powered by DigData</div>"
+if os.path.exists(logo_path):
+    with open(logo_path, 'rb') as f:
+        logo_base64 = base64.b64encode(f.read()).decode('utf-8')
+    footer_html += f"<img src='data:image/png;base64,{logo_base64}' width='40' style='border-radius:8px; margin-left:12px;'/>"
+footer_html += "</div>"
+st.sidebar.markdown(footer_html, unsafe_allow_html=True)
