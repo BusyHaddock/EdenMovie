@@ -9,6 +9,9 @@ import requests
 from datetime import datetime, timedelta
 from streamlit_authenticator import Authenticate
 
+st.set_page_config(layout="wide")
+
+
 # import des données
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -16,7 +19,40 @@ df_movies = pd.read_csv(os.path.join(BASE_DIR, "data", "df_film.csv"))
 df_ml = pd.read_csv(os.path.join(BASE_DIR, "data", "df_reco_clean.csv"))
 
 def afficher_barre_navigation():
-    """Affiche la barre de navigation en haut à droite avec bouton connexion/déconnexion"""
+    # Masquer sidebar Streamlit par défaut
+    st.markdown("""
+        <style>
+        div[data-testid="stSidebarNav"] { display: none; }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Logo sidebar
+    st.sidebar.markdown("""
+        <h1 style='margin: 0; font-size: 1.5rem; font-family: "Segoe UI", sans-serif; text-align: center;'>
+            <span style='color:white;'>MOVI</span><span style='color:#4169E1;'>EDEN</span>
+        </h1>
+    """, unsafe_allow_html=True)
+
+    st.sidebar.markdown("---")
+
+    # Navigation
+    st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
+    st.sidebar.page_link("pages/recherche_film.py", label="Recherche", icon="🔍")
+    st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
+    st.sidebar.markdown("---")
+    st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
+
+    # Footer logo
+    logo_path = os.path.join(BASE_DIR, "assets", "uploads", "logo.png")
+    footer_html = "<div class='sidebar-footer'><div style='font-size:12px; color:gray;'>Powered by DigData</div>"
+    if os.path.exists(logo_path):
+        with open(logo_path, 'rb') as f:
+            logo_base64 = base64.b64encode(f.read()).decode('utf-8')
+        footer_html += f"<img src='data:image/png;base64,{logo_base64}' width='40' style='border-radius:8px; margin-left:12px;'/>"
+    footer_html += "</div>"
+    st.sidebar.markdown(footer_html, unsafe_allow_html=True)
+
+    # Barre connexion en haut à droite
     top_bar_cols = st.columns([10, 1.5], gap="medium")
     with top_bar_cols[1]:
         if st.session_state.get("authentication_status"):
@@ -26,7 +62,6 @@ def afficher_barre_navigation():
                 st.rerun()
         else:
             st.page_link("pages/connection.py", label="🔐 Se connecter")
-
 
 def parse_genres(val):
     """Safely parse a genres value from the dataframe into a list of strings.
@@ -124,63 +159,31 @@ df_movies = df_movies.drop_duplicates(subset='tconst').reset_index(drop=True)
 
 # import du style css
 def local_css(file_name):
-    with open(file_name) as f:
+    with open(file_name, encoding='utf-8') as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-local_css("assets/style.css")
+local_css(os.path.join(BASE_DIR, "assets", "style.css")) 
 
-st.set_page_config(layout="wide")
 
 # Barre de navigation en haut avec bouton connexion à droite
 afficher_barre_navigation()
-
-# Masquer le menu de pages automatique de Streamlit si vous utilisez un système de navigation personnalisé.
-st.markdown(
-    """
-    <style>
-    div[data-testid="stSidebarNav"] {
-        display: none;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# Création de la side bar
-st.sidebar.markdown(
-    """
-    <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
-        <span class='white'>MOVIE</span><span style='color:#4169E1;'>DEN</span>
-    </h1>
-    """,
-    unsafe_allow_html=True,
-)
-
-st.sidebar.markdown("---")
-
-# Navigation personnalisée sans emojis dupliqués
-st.sidebar.page_link("app.py", label="Accueil", icon="🏠")
-st.sidebar.page_link("pages/recherche_film.py", label="Recherche", icon="🔍")  #kk
-st.sidebar.page_link("pages/reco.py", label="Recommandation", icon="⭐")
-st.sidebar.markdown("---")
-st.sidebar.page_link("pages/a_propos.py", label="A propos", icon="ℹ️")
 
 # création de alias container
 c = st.container()
 
 # Affichage de la page main
-logo_path_eden = os.path.join(BASE_DIR, "assets", "uploads", "Logo eden.png")
+ban_path_eden = os.path.join(BASE_DIR, "assets", "uploads", "ban_eden.png")
 
-if os.path.exists(logo_path_eden):
-    with open(logo_path_eden, 'rb') as f:
-        logo_base64 = base64.b64encode(f.read()).decode('utf-8')
+if os.path.exists(ban_path_eden):
+    with open(ban_path_eden, 'rb') as f:
+        ban_base64 = base64.b64encode(f.read()).decode('utf-8')
     st.markdown(
         f"""
-        <div class='main-header-banner' style="background-image:url('data:image/png;base64,{logo_base64}')">
+        <div class='main-header-banner' style="background-image:url('data:image/png;base64,{ban_base64}')">
             <div class='main-header-banner-overlay'>
                 <h1>
                     <span style='color:#4169E1;'>Bienvenue sur </span>
-                    <span class='white'>Movi</span><span style='color:#4169E1;'>EDEN</span>
+                    <span class='white'>MOVI</span><span style='color:#4169E1;'>EDEN</span>
                 </h1>
             </div>
         </div>
@@ -192,7 +195,7 @@ else:
         """
         <h1 style='margin: 0; font-size: 2.8rem; font-family: "Segoe UI", sans-serif;'>
             <span style='color:#4169E1;'>Bienvenue sur </span>
-            <span class='white'>Movi</span><span style='color:#4169E1;'>EDEN</span>
+            <span class='white'>MOVI</span><span style='color:#4169E1;'>EDEN</span>
         </h1>
         """,
         unsafe_allow_html=True,
@@ -203,7 +206,12 @@ st.write('___')
 # source des images d'affiche de film
 source = "https://image.tmdb.org/t/p/original/"
 
-df_popular = df_movies[df_movies['startYear'] == 2026].sort_values(by='popularity', ascending=False).reset_index(drop=True)
+df_popular = df_movies[
+    (df_movies['startYear'] <= 2026) &
+    (df_movies['startYear'] >= 2024) &
+    (df_movies['avg_rating_imdb'] > 0) &
+    (df_movies['avg_rating_tmdb'] > 0)
+].sort_values(by='popularity', ascending=False).reset_index(drop=True)
 
 # Section films à venir
 st.subheader("Bientôt en Salle")
@@ -227,7 +235,7 @@ if upcoming_movies:
                              </div>
 
                             </div>
-                            """, unsafe_allow_html=True)
+                            """, unsafe_allow_html=True)      
             else:
                 st.markdown(f"""
                     <div class='upcoming-card'>
@@ -281,7 +289,7 @@ if not df_popular.empty:
     vote_avg_imdb = top1['avg_rating_imdb'] if pd.notna(top1['avg_rating_imdb']) else 0
     vote_avg_tmdb = top1['avg_rating_tmdb'] if pd.notna(top1['avg_rating_tmdb']) else 0
     overview_text = top1['overview'] if pd.notna(top1.get('overview', '')) else ''
-    ba = f"https://www.youtube.com/watch?v={top1['trailer_key']}"
+ 
     st.markdown(f"""
         <div class="top1-banner" style="background-image:url('{source}{banner_src}');">
             <div class="top1-overlay">
@@ -290,11 +298,18 @@ if not df_popular.empty:
                     <h2>{top1['title_fr']}</h2>
                     <div class="rating">⭐ IMDB {vote_avg_imdb:.1f}/10 · ⭐ TMDb {vote_avg_tmdb:.1f}/10 · 📅 {top1['startYear']}</div>
                     <p class="synopsis">{overview_text}</p>
-                    <a class="btn-watch" href="{ba}" target="_blank">Voir la bande annonce</a>
                 </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
+    if st.button(
+                "🎬 Voir détails",
+            ):
+        st.session_state["selected_tconst"] = top1["tconst"]
+        st.switch_page("pages/movie_detail.py")
+    if "show_trailer" not in st.session_state:
+        st.session_state.show_trailer = False
+
 
 st.markdown("<div class='top-list'>", unsafe_allow_html=True)
 for idx, (_, movie) in enumerate(df_popular.iloc[1:5].iterrows(), start=2):
@@ -302,37 +317,40 @@ for idx, (_, movie) in enumerate(df_popular.iloc[1:5].iterrows(), start=2):
     genres_text = ", ".join(genres) if isinstance(genres, list) else str(genres)
     vote_avg_imdb = movie['avg_rating_imdb'] if pd.notna(movie['avg_rating_imdb']) else 0
     vote_avg_tmdb = movie['avg_rating_tmdb'] if pd.notna(movie['avg_rating_tmdb']) else 0
-    st.markdown(f"""
-        <div class="top-list-card">
-            <div class="top-number">{idx}</div>
-            <div class="top-card-content">
-                <img src="{source}{movie['poster_path']}" class="small-poster" />
-                <div class="top-card-text">
-                    <div class="movie-title">{movie['title_fr']}</div>
-                    <div class="movie-info">⭐ IMDB : {vote_avg_imdb:.1f}/10 · ⭐ TMDb : {vote_avg_tmdb:.1f}/10</div>
-                    <div class="movie-info">📅 {movie['startYear']} · {genres_text}</div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-st.markdown("</div>", unsafe_allow_html=True)
+    banner_src = movie['backdrop_path'] if pd.notna(movie.get('backdrop_path', '')) and movie['backdrop_path'] != '' else movie['poster_path']
 
+    st.markdown(f"""
+        <div class="top-list-card" style="--poster: url('{banner_src}');">
+                    <div class="top-number">{idx}</div>
+                        <div class="top-card-content">
+                            <img src="{source}{movie['poster_path']}" class="small-poster" />
+                                <div class="top-card-text">
+                                <div class="movie-title">{movie['title_fr']}</div>
+                                <div class="movie-info">⭐ IMDB : {vote_avg_imdb:.1f}/10 · ⭐ TMDb : {vote_avg_tmdb:.1f}/10</div>
+                                <div class="movie-info">📅 {movie['startYear']} · {genres_text}</div>
+        """, unsafe_allow_html=True)
+    if st.button("🎬 Voir détails", key=f"details_{idx}"):
+        st.session_state["selected_tconst"] = movie["tconst"]
+        st.switch_page("pages/movie_detail.py")
+st.markdown("</div>", unsafe_allow_html=True)
+    
 if 'show_more' not in st.session_state:
     st.session_state.show_more = False
+
 more_container = st.empty()
-if st.session_state.get('show_more', False):
+
+if st.session_state.show_more:  # ← plus de .get() avec valeur par défaut
     more = df_popular.iloc[5:10]
     if not more.empty:
-        with more_container:
-            st.markdown("<div class='top-list'>", unsafe_allow_html=True)
-            for idx, (_, movie) in enumerate(more.iterrows(), start=6):
-                genres = parse_genres(movie['genres'])
-                genres_text = ", ".join(genres) if isinstance(genres, list) else str(genres)
-                vote_avg_imdb = movie['avg_rating_imdb'] if pd.notna(movie['avg_rating_imdb']) else 0
-                vote_avg_tmdb = movie['avg_rating_tmdb'] if pd.notna(movie['avg_rating_tmdb']) else 0
-                st.markdown(f"""
-                    <div class="top-list-card">
-                        <div class="top-number">{idx}</div>
+        st.markdown("<div class='top-list'>", unsafe_allow_html=True)
+        for idx, (_, movie) in enumerate(more.iterrows(), start=6):
+            genres = parse_genres(movie['genres'])
+            genres_text = ", ".join(genres) if isinstance(genres, list) else str(genres)
+            vote_avg_imdb = movie['avg_rating_imdb'] if pd.notna(movie['avg_rating_imdb']) else 0
+            vote_avg_tmdb = movie['avg_rating_tmdb'] if pd.notna(movie['avg_rating_tmdb']) else 0
+            st.markdown(f"""
+                <div class="top-list-card">
+                    <div class="top-number">{idx}</div>
                         <div class="top-card-content">
                             <img src="{source}{movie['poster_path']}" class="small-poster" />
                             <div class="top-card-text">
@@ -342,25 +360,27 @@ if st.session_state.get('show_more', False):
                             </div>
                         </div>
                     </div>
-                    """, unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)
-    else:
-        with more_container:
-            st.info("Aucun film supplémentaire trouvé.")
+                """, unsafe_allow_html=True)
+            if st.button("🎬 Voir détails", key=f"details_{idx}"):
+                st.session_state["selected_tconst"] = movie["tconst"]
+                st.switch_page("pages/movie_detail.py")
+        st.markdown("</div>", unsafe_allow_html=True)
 
-label = "Afficher moins" if st.session_state.get('show_more', False) else "Afficher plus"
+label = "Afficher moins" if st.session_state.show_more else "Afficher plus"
 if st.button(label):
-    st.session_state.show_more = not st.session_state.get('show_more', False)
+    st.session_state.show_more = not st.session_state.show_more
     st.rerun()
+print(len(df_popular))  # combien de films en 2026 ?
+if st.session_state.show_trailer:
 
-# Sidebar footer: Powered by DigData + zone logo
-st.sidebar.markdown("---")
-logo_path = os.path.join(BASE_DIR, "assets", "uploads", "logo.png")
-footer_html = "<div class='sidebar-footer'>"
-footer_html += "<div style='font-size:12px; color:gray;'>Powered by DigData</div>"
-if os.path.exists(logo_path):
-    with open(logo_path, 'rb') as f:
-        logo_base64 = base64.b64encode(f.read()).decode('utf-8')
-    footer_html += f"<img src='data:image/png;base64,{logo_base64}' width='40' style='border-radius:8px; margin-left:12px;'/>"
-footer_html += "</div>"
-st.sidebar.markdown(footer_html, unsafe_allow_html=True)
+    @st.dialog("🎬 Bande-annonce", width="large")
+    def trailer_popup():
+        st.video(
+            f"https://www.youtube.com/watch?v={st.session_state['trailer']}",
+            width=2000
+        )
+
+    trailer_popup()
+
+    st.session_state.show_trailer = False
+
