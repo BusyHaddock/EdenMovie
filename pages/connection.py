@@ -9,7 +9,11 @@ import numpy as np
 import json
 from app import afficher_barre_navigation, local_css, BASE_DIR
 
-st.set_page_config(layout="wide")
+st.set_page_config(
+   layout="wide",
+   page_title="MOVIEDEN - Connexion",
+   page_icon="🔐"
+   )
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import afficher_barre_navigation, local_css, BASE_DIR

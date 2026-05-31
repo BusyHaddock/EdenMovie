@@ -9,7 +9,10 @@ import requests
 from datetime import datetime, timedelta
 from streamlit_authenticator import Authenticate
 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    layout="wide",
+    page_title="MOVIEDEN - Accueil",
+    page_icon="🏠")
 
 
 # import des données

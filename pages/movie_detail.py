@@ -3,7 +3,10 @@ import pandas as pd
 import os
 
 # EN PREMIER avant tout
-st.set_page_config(layout="wide")
+st.set_page_config(
+    layout="wide",
+    page_title="MOVIEDEN - Détail du film",
+    page_icon="🎬")
 
 # Ensuite seulement les imports locaux
 import sys

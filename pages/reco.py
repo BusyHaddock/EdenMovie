@@ -4,7 +4,11 @@ import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 from app import afficher_barre_navigation, BASE_DIR, local_css
 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    layout="wide",
+    page_title="MOVIEDEN - Recommandation",
+    page_icon="🎬"
+)
 local_css(os.path.join(BASE_DIR, "assets", "style.css"))
 afficher_barre_navigation()
 

@@ -7,7 +7,9 @@ from app import afficher_barre_navigation, local_css, BASE_DIR
 import json
 import base64
 
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide",
+                   page_title="MOVIEDEN - Création de compte",
+                   page_icon="📝")
 
 # import du style css
 
